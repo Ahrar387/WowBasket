@@ -148,3 +148,5 @@ The codebase is organized to easily add:
 - ✅ Loading skeletons
 - ✅ Error handling & 404 page
 - ✅ TypeScript throughout
+
+- 
