@@ -4,14 +4,29 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
-  title: { default: "TrendKart — India's Curated Affiliate Marketplace", template: "%s | TrendKart" },
-  description: "Discover the best deals across Amazon & Flipkart. Curated products, verified discounts, updated daily.",
-  keywords: ["deals","offers","affiliate","amazon","flipkart","india","discount"],
-  openGraph: { type: "website", siteName: "TrendKart", locale: "en_IN" },
-  robots: { index: true, follow: true },
+  title: {
+    default: "WOW BASKET — Discover Unique Finds",
+    template: "%s | WOW BASKET",
+  },
+  description:
+    "Discover unique products and the best deals at WOW BASKET.",
+  keywords: ["wow basket", "shopping", "deals", "offers", "online shopping"],
+  openGraph: {
+    type: "website",
+    siteName: "WOW BASKET",
+    locale: "en_IN",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col">
