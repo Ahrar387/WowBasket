@@ -1,16 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-
+type Category = {
+  id: string;
+  name: string;
+};
 export default function AddProductPage() {
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-
+const [categories, setCategories] = useState<Category[]>([]);
   const [form, setForm] = useState({
     name: "",
     slug: "",
@@ -25,7 +28,23 @@ export default function AddProductPage() {
     in_stock: true,
     trending: false,
   });
+useEffect(() => {
+  fetchCategories();
+}, []);
 
+async function fetchCategories() {
+  const { data, error } = await supabase
+    .from("categories")
+    .select("id, name")
+    .order("name");
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  setCategories(data || []);
+}
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
@@ -164,13 +183,30 @@ async function handleImageUpload(
               Category
             </label>
 
-            <input
-              name="category"
-              value={form.category}
-              onChange={handleChange}
-              type="text"
-              className="w-full rounded-lg border p-3"
-            />
+            <select
+  name="category"
+  value={form.category}
+  onChange={(e) =>
+    setForm((prev) => ({
+      ...prev,
+      category: e.target.value,
+    }))
+  }
+  className="w-full rounded-lg border p-3"
+>
+  <option value="">
+    Select Category
+  </option>
+
+  {categories.map((category) => (
+    <option
+      key={category.id}
+      value={category.name}
+    >
+      {category.name}
+    </option>
+  ))}
+</select>
           </div>
 
           <div>
