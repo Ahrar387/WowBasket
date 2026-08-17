@@ -3,7 +3,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CATEGORIES } from "@/lib/categories";
-
+const PRICE_OPTIONS = [
+  { value: "", label: "All Prices" },
+  { value: "0-500", label: "₹0 - ₹500" },
+  { value: "500-1000", label: "₹500 - ₹1000" },
+  { value: "1000-5000", label: "₹1000 - ₹5000" },
+  { value: "5000-999999", label: "₹5000+" },
+];
 const SORT_OPTIONS = [
   { value: "newest",     label: "Newest" },
   { value: "discount",   label: "Best Discount" },
@@ -17,7 +23,7 @@ interface Props { currentCategory?: string; currentSort?: string; showCategoryFi
 export default function FilterBar({ currentCategory, currentSort = "newest", showCategoryFilter = true }: Props) {
   const router = useRouter();
   const params = useSearchParams();
-
+const currentPrice = params.get("price") ?? "";
   function update(key: string, value: string) {
     const next = new URLSearchParams(params.toString());
     if (value) next.set(key, value); else next.delete(key);
@@ -44,6 +50,31 @@ export default function FilterBar({ currentCategory, currentSort = "newest", sho
           ))}
         </div>
       )}
+      <select
+  value={currentPrice}
+  onChange={(e) => {
+    const next = new URLSearchParams(params.toString());
+
+    if (!e.target.value) {
+      next.delete("price");
+    } else {
+      next.set("price", e.target.value);
+    }
+
+    next.delete("page");
+
+    router.push(`?${next.toString()}`, {
+      scroll: false,
+    });
+  }}
+  className="select text-sm py-1.5 h-9 w-auto pr-8"
+>
+  {PRICE_OPTIONS.map((p) => (
+    <option key={p.value} value={p.value}>
+      {p.label}
+    </option>
+  ))}
+</select>
       <select value={currentSort} onChange={e => update("sortBy", e.target.value)}
         className="ml-auto select text-sm py-1.5 h-9 w-auto pr-8">
         {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}

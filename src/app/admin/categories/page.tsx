@@ -13,27 +13,31 @@ type Category = {
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-
+const [error, setError] = useState("");
   useEffect(() => {
     fetchCategories();
   }, []);
 
   async function fetchCategories() {
-    setLoading(true);
+  setLoading(true);
+  setError("");
 
-    const { data, error } = await supabase
-      .from("categories")
-      .select("id, name, slug")
-      .order("created_at", { ascending: false });
+  const { data, error } = await supabase
+    .from("categories")
+    .select("id, name, slug")
+    .order("created_at", { ascending: false });
 
-    if (error) {
-      alert(error.message);
-    } else {
-      setCategories(data || []);
-    }
-
+  if (error) {
+    console.error("Categories fetch error:", error);
+    setCategories([]);
+    setError("Categories load nahi ho paayi. Please try again.");
     setLoading(false);
+    return;
   }
+
+  setCategories(data || []);
+  setLoading(false);
+}
 
   async function deleteCategory(id: string) {
     const ok = window.confirm(
@@ -59,14 +63,35 @@ export default function CategoriesPage() {
   }
 
   if (loading) {
-    return (
-      <div className="p-6">
-        <p className="text-lg font-medium">
-          Loading Categories...
-        </p>
-      </div>
-    );
-  }
+  return (
+    <div className="flex min-h-[300px] items-center justify-center">
+      <p className="text-lg font-medium text-gray-600">
+        Loading Categories...
+      </p>
+    </div>
+  );
+}
+
+if (error) {
+  return (
+    <div className="rounded-xl border border-red-200 bg-red-50 p-6">
+      <h2 className="text-lg font-semibold text-red-700">
+        Unable to load categories
+      </h2>
+
+      <p className="mt-2 text-red-600">
+        {error}
+      </p>
+
+      <button
+        onClick={fetchCategories}
+        className="mt-4 rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+      >
+        Try Again
+      </button>
+    </div>
+  );
+}
 
   return (
     <div className="p-6">

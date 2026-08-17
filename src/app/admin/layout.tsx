@@ -20,9 +20,15 @@ export default function AdminLayout({
 
   const menu = [
     { name: "Dashboard", href: "/admin/dashboard" },
+    { name: "Homepage", href: "/admin/homepage" },
     { name: "Products", href: "/admin/products" },
     { name: "Categories", href: "/admin/categories" },
     { name: "Banners", href: "/admin/banners" },
+    
+    { name: "SEO", href: "/admin/seo" },
+    { name: "Pages", href: "/admin/pages" },
+    { name: "Messages", href: "/admin/messages" },
+    { name: "Newsletter", href: "/admin/newsletter" },
     { name: "Settings", href: "/admin/settings" },
   ];
 
@@ -31,10 +37,10 @@ export default function AdminLayout({
       {/* Sidebar */}
       <aside className="w-64 bg-gray-900 text-white">
         <div className="border-b border-gray-700 p-6">
-          <h1 className="text-2xl font-bold">TrendKart Admin</h1>
+          <h1 className="text-2xl font-bold">WOW BASKET Admin</h1>
         </div>
 
-        <nav className="p-4 space-y-2">
+        <nav className="space-y-2 p-4">
           {menu.map((item) => (
             <Link
               key={item.href}

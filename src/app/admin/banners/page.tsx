@@ -15,23 +15,31 @@ type Banner = {
 export default function BannersPage() {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [loading, setLoading] = useState(true);
-
+const [error, setError] = useState("");
   useEffect(() => {
     fetchBanners();
   }, []);
 
-  async function fetchBanners() {
-    const { data, error } = await supabase
-      .from("banners")
-      .select("*")
-      .order("created_at", { ascending: false });
+ async function fetchBanners() {
+  setLoading(true);
+  setError("");
 
-    if (!error && data) {
-      setBanners(data);
-    }
+  const { data, error } = await supabase
+    .from("banners")
+    .select("*")
+    .order("created_at", { ascending: false });
 
+  if (error) {
+    console.error("Banners fetch error:", error);
+    setBanners([]);
+    setError("Banners load nahi ho paaye. Please try again.");
     setLoading(false);
+    return;
   }
+
+  setBanners(data || []);
+  setLoading(false);
+}
 async function handleDelete(id: string) {
   const confirmDelete = confirm(
     "Are you sure you want to delete this banner?"
@@ -53,9 +61,36 @@ async function handleDelete(id: string) {
 
   fetchBanners();
 }
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+if (loading) {
+  return (
+    <div className="flex min-h-[300px] items-center justify-center">
+      <p className="text-lg font-medium text-gray-600">
+        Loading Banners...
+      </p>
+    </div>
+  );
+}
+
+if (error) {
+  return (
+    <div className="rounded-xl border border-red-200 bg-red-50 p-6">
+      <h2 className="text-lg font-semibold text-red-700">
+        Unable to load banners
+      </h2>
+
+      <p className="mt-2 text-red-600">
+        {error}
+      </p>
+
+      <button
+        onClick={fetchBanners}
+        className="mt-4 rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+      >
+        Try Again
+      </button>
+    </div>
+  );
+}
 
   return (
     <div>
@@ -110,10 +145,14 @@ async function handleDelete(id: string) {
     >
       <td className="p-4">
         <img
-          src={banner.image}
-          alt={banner.title}
-          className="h-14 w-24 rounded-lg border object-cover"
-        />
+  src={banner.image || "/wow-basket.png"}
+  alt={banner.title}
+  className="h-14 w-24 rounded-lg border object-cover"
+  onError={(e) => {
+    e.currentTarget.onerror = null;
+    e.currentTarget.src = "/wow-basket.png";
+  }}
+/>
       </td>
 
       <td className="p-4 font-medium">

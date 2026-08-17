@@ -1,46 +1,100 @@
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Star, ExternalLink, TrendingUp, Zap, Shield } from "lucide-react";
-import { getFeaturedProducts, getTrendingProducts } from "@/lib/products";
+import {
+  getFeaturedProducts,
+  getTrendingProducts,
+  getTopMonthlyProducts,
+} from "@/lib/products";
 import { CATEGORIES } from "@/lib/categories";
 import { formatPrice, formatDiscount, cn } from "@/lib/utils";
 import ProductCard from "@/components/product/ProductCard";
 
+import { supabaseServer } from "@/lib/supabase-server";
+
 export default async function HomePage() {
-  const [featured, trending] = await Promise.all([getFeaturedProducts(8), getTrendingProducts(8)]);
+const [
+  featured,
+  trending,
+  topMonthly,
+  homepage,
+] = await Promise.all([
+  getFeaturedProducts(8),
+  getTrendingProducts(8),
+  getTopMonthlyProducts(8),
+  supabaseServer
+    .from("homepage")
+    .select("*")
+    .limit(1)
+    .maybeSingle(),
+]);
+
+const hero = homepage.data;
 
   return (
     <div className="space-y-16 pb-16">
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
-        <div className="container-site py-16 sm:py-24">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 bg-brand-500/20 border border-brand-500/30 rounded-full px-4 py-1.5 text-sm font-medium text-brand-300 mb-6">
-              <Zap className="h-3.5 w-3.5 fill-current" /> Updated daily with fresh deals
-            </div>
-            <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight tracking-tight mb-4">
-              Best Deals Across<br />
-              <span className="text-brand-400">Amazon & Flipkart</span>
-            </h1>
-            <p className="text-lg text-gray-300 mb-8 leading-relaxed">
-              Handpicked products, verified discounts, and price comparisons — all in one place. No ads, no spam.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Link href="/products" className="btn-primary text-base px-6 py-3">
-                Browse All Deals <ArrowRight className="h-5 w-5" />
-              </Link>
-              <Link href="/categories" className="btn-secondary text-base px-6 py-3 bg-white/10 border-white/20 text-white hover:bg-white/20">
-                Shop by Category
-              </Link>
-            </div>
-            <div className="flex flex-wrap gap-6 mt-10 text-sm text-gray-400">
-              {[["✅","Verified Deals"],["🔄","Updated Daily"],["💰","Best Prices"],["🚀","1000+ Products"]].map(([icon,label]) => (
-                <div key={label} className="flex items-center gap-2"><span>{icon}</span><span>{label}</span></div>
-              ))}
-            </div>
-          </div>
+     {/* Hero */}
+<section className="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+  <div className="container-site py-16 sm:py-24">
+
+    <div className="grid items-center gap-12 lg:grid-cols-2">
+
+      {/* Left */}
+      <div>
+
+        <div className="inline-flex items-center gap-2 rounded-full border border-brand-500/30 bg-brand-500/20 px-4 py-1.5 text-sm font-medium text-brand-300 mb-6">
+          <Zap className="h-3.5 w-3.5 fill-current" />
+          Updated Daily
         </div>
-      </section>
+
+        <h1 className="mb-6 text-4xl font-extrabold leading-tight sm:text-5xl">
+          {hero?.hero_title || "Best Deals Across"}
+        </h1>
+
+        <p className="mb-8 text-lg text-gray-300">
+          {hero?.hero_subtitle ||
+            "Discover handpicked products at the best prices."}
+        </p>
+
+        <Link
+          href={hero?.hero_button_link || "/products"}
+          className="btn-primary px-8 py-3 text-base"
+        >
+          {hero?.hero_button_text || "Browse Products"}
+        </Link>
+
+      </div>
+
+      {/* Right */}
+      <div className="flex justify-center">
+
+        {hero?.hero_image ? (
+
+          <Image
+            src={hero.hero_image}
+            alt="Hero"
+            width={600}
+            height={600}
+            priority
+            className="rounded-2xl shadow-2xl"
+          />
+
+        ) : (
+
+          <div className="flex h-[420px] w-full items-center justify-center rounded-2xl border border-dashed border-white/20 bg-white/5 text-gray-400">
+            Upload Hero Image
+          </div>
+
+        )}
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
 
       {/* Categories */}
       <section className="container-site">
@@ -119,6 +173,46 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+      {/* Most Clicked This Month */}
+{topMonthly.length > 0 && (
+  <section className="container-site">
+    <div className="flex items-center justify-between mb-6">
+
+      <div>
+        <div className="flex items-center gap-2 mb-1">
+          <TrendingUp className="h-5 w-5 text-orange-500" />
+          <h2 className="section-title">
+            Most Clicked This Month
+          </h2>
+        </div>
+
+        <p className="text-sm text-gray-500">
+          Products customers are viewing the most
+        </p>
+      </div>
+
+      <Link
+        href="/products"
+        className="text-sm font-semibold text-brand-500 hover:text-brand-600 flex items-center gap-1"
+      >
+        View all
+        <ArrowRight className="h-4 w-4" />
+      </Link>
+
+    </div>
+
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+
+      {topMonthly.map((p) => (
+        <ProductCard
+          key={p.id}
+          product={p}
+        />
+      ))}
+
+    </div>
+  </section>
+)}
     </div>
   );
 }

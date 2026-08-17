@@ -13,25 +13,32 @@ export default function AdminLoginPage() {
   const [error, setError] = useState("");
 
   async function handleLogin(e: React.FormEvent) {
-    e.preventDefault();
+  e.preventDefault();
 
-    setLoading(true);
-    setError("");
+  console.log("LOGIN BUTTON CLICKED");
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+  setLoading(true);
+  setError("");
 
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  console.log("LOGIN DATA:", data);
+  console.log("LOGIN ERROR:", error);
+
+  if (error) {
     setLoading(false);
-
-    if (error) {
-      setError(error.message);
-      return;
-    }
-
-    router.push("/admin/dashboard");
+    setError(error.message);
+    return;
   }
+
+  console.log("LOGIN SUCCESS");
+  console.log("GOING TO DASHBOARD");
+
+  window.location.href = "/admin/dashboard";
+}
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-100 px-4">

@@ -41,11 +41,19 @@ export interface CategoryMeta {
 export interface ProductFilters {
   category?: string;
   search?: string;
+
+  brand?: string;
+
+  minPrice?: number;
+
+  maxPrice?: number;
+
   sortBy?: string;
+
   page?: number;
+
   pageSize?: number;
 }
-
 export interface PaginatedResponse<T> {
   data: T[];
   total: number;

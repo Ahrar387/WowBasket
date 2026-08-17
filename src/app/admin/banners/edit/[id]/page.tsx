@@ -9,12 +9,15 @@ export default function EditBannerPage() {
 const router = useRouter();
   const [loading, setLoading] = useState(true);
 const [uploading, setUploading] = useState(false);
-  const [form, setForm] = useState({
-    title: "",
-    link: "",
-    image: "",
-    active: true,
-  });
+ const [form, setForm] = useState({
+  title: "",
+  subtitle: "",
+  button_text: "",
+  link: "",
+  image: "",
+  sort_order: 0,
+  active: true,
+});
 
   useEffect(() => {
     fetchBanner();
@@ -32,13 +35,15 @@ const [uploading, setUploading] = useState(false);
       return;
     }
 
-    setForm({
-      title: data.title,
-      link: data.link,
-      image: data.image,
-      active: data.active,
-    });
-
+   setForm({
+  title: data.title || "",
+  subtitle: data.subtitle || "",
+  button_text: data.button_text || "",
+  link: data.link || "",
+  image: data.image || "",
+  sort_order: data.sort_order || 0,
+  active: data.active,
+});
     setLoading(false);
   }
   async function handleImageUpload(
@@ -78,10 +83,13 @@ const [uploading, setUploading] = useState(false);
 async function handleUpdate() {
   const { error } = await supabase
     .from("banners")
-  .update({
+.update({
   title: form.title,
+  subtitle: form.subtitle,
+  button_text: form.button_text,
   link: form.link,
   image: form.image,
+  sort_order: form.sort_order,
   active: form.active,
 })
     .eq("id", id);
@@ -127,27 +135,79 @@ async function handleUpdate() {
 />
           </div>
 
-          <div>
-            <label className="mb-2 block font-medium">
-              Banner Link
-            </label>
+         <div>
+  <label className="mb-2 block font-medium">
+    Banner Subtitle
+  </label>
 
-           <input
-  value={form.link}
-  onChange={(e) =>
-    setForm((prev) => ({
-      ...prev,
-      link: e.target.value,
-    }))
-  }
-  className="w-full rounded-lg border p-3"
+  <input
+    value={form.subtitle}
+    onChange={(e) =>
+      setForm((prev) => ({
+        ...prev,
+        subtitle: e.target.value,
+      }))
+    }
+    className="w-full rounded-lg border p-3"
+  />
+</div>
+
+<div>
+  <label className="mb-2 block font-medium">
+    Button Text
+  </label>
+
+  <input
+    value={form.button_text}
+    onChange={(e) =>
+      setForm((prev) => ({
+        ...prev,
+        button_text: e.target.value,
+      }))
+    }
+    className="w-full rounded-lg border p-3"
+  />
+</div>
+<div>
+  <label className="mb-2 block font-medium">
+    Banner Link
+  </label>
+
+  <input
+    type="url"
+    value={form.link}
+    onChange={(e) =>
+      setForm((prev) => ({
+        ...prev,
+        link: e.target.value,
+      }))
+    }
+    className="w-full rounded-lg border p-3"
+  />
+</div>
+<div>
+  <label className="mb-2 block font-medium">
+    Banner Order
+  </label>
+
+  <input
+    type="number"
+    value={form.sort_order}
+    onChange={(e) =>
+      setForm((prev) => ({
+        ...prev,
+        sort_order: Number(e.target.value),
+      }))
+    }
+    className="w-full rounded-lg border p-3"
+  />
+</div>
+
+         <img
+  src={form.image}
+  alt="Banner Preview"
+  className="h-40 w-full rounded-lg border object-cover"
 />
-          </div>
-
-          <img
-            src={form.image}
-            className="h-40 rounded-lg border"
-          />
          
 
 <input
@@ -163,13 +223,28 @@ async function handleUpdate() {
   </p>
 )}
 
+<label className="flex items-center gap-3">
+  <input
+    type="checkbox"
+    checked={form.active}
+    onChange={(e) =>
+      setForm((prev) => ({
+        ...prev,
+        active: e.target.checked,
+      }))
+    }
+  />
+
+  <span className="font-medium">
+    Active Banner
+  </span>
+</label>
 <button
   onClick={handleUpdate}
-  className="rounded-lg bg-blue-600 px-6 py-3 text-white hover:bg-blue-700"
+  className="mt-6 rounded-lg bg-blue-600 px-6 py-3 text-white hover:bg-blue-700"
 >
   Update Banner
 </button>
-
         </div>
 
       </div>

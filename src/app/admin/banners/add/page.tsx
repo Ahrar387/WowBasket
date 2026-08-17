@@ -34,6 +34,7 @@ export default function AddBannerPage() {
   async function handleImageUpload(
     e: ChangeEvent<HTMLInputElement>
   ) {
+    
     const file = e.target.files?.[0];
 
     if (!file) return;
@@ -128,7 +129,7 @@ export default function AddBannerPage() {
           </label>
 
           <input
-            type="text"
+          type="url"
             name="link"
             value={form.link}
             onChange={handleChange}

@@ -12,6 +12,7 @@ interface Props {
     q?: string;
     sortBy?: string;
     page?: string;
+    price?: string;
   }>;
 }
 
@@ -36,14 +37,27 @@ export default async function SearchPage({ searchParams }: Props) {
   const query = sp.q?.trim() ?? "";
   const page = parseInt(sp.page ?? "1");
   const sortBy = sp.sortBy ?? "newest";
+const price = sp.price ?? "";
 
+let minPrice: number | undefined;
+let maxPrice: number | undefined;
+
+if (price) {
+  const [min, max] = price.split("-");
+
+  minPrice = Number(min);
+
+  maxPrice = Number(max);
+}
   const result = query
-    ? await getProducts({
-        search: query,
-        sortBy,
-        page,
-        pageSize: 12,
-      })
+  ? await getProducts({
+      search: query,
+      sortBy,
+      page,
+      pageSize: 12,
+      minPrice,
+      maxPrice,
+    })
     : {
         data: [],
         total: 0,
