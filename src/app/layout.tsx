@@ -13,12 +13,6 @@ export async function generateMetadata(): Promise<Metadata> {
     .limit(1)
     .maybeSingle();
 
-<<<<<<< HEAD
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-=======
   return {
     metadataBase: new URL("https://yourdomain.com"),
 
@@ -64,7 +58,6 @@ export default function RootLayout({
       description:
         data?.meta_description ||
         "Discover the best online shopping deals.",
-
       url: "https://yourdomain.com",
 
       images: data?.og_image
@@ -85,10 +78,7 @@ export default function RootLayout({
       description:
         data?.meta_description ||
         "Discover the best online shopping deals.",
-
-      images: data?.og_image
-        ? [data.og_image]
-        : [],
+      images: data?.og_image ? [data.og_image] : [],
     },
   };
 }
@@ -97,17 +87,16 @@ export default function RootLayout({
   children,
 }: {
   children: ReactNode;
->>>>>>> 20ff1abd (final production ready)
 }) {
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col">
-  <WishlistProvider>
-    <Header />
-    <main className="flex-1">{children}</main>
-    <Footer />
-  </WishlistProvider>
-</body>
+        <WishlistProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </WishlistProvider>
+      </body>
     </html>
   );
 }

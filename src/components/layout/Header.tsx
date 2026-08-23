@@ -12,11 +12,11 @@ import {
   ChevronDown,
   Heart,
 } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 import { CATEGORIES } from "@/lib/categories";
 import { supabase } from "@/lib/supabase";
 import { useWishlist } from "@/context/WishlistContext";
+
 export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
@@ -32,19 +32,24 @@ export default function Header() {
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
-const { wishlist } = useWishlist();
+
+  const { wishlist } = useWishlist();
+
   const searchRef = useRef<HTMLDivElement>(null);
   const catRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 8);
+    const fn = () => {
+      setScrolled(window.scrollY > 8);
+    };
 
     window.addEventListener("scroll", fn, {
       passive: true,
     });
 
-    return () =>
+    return () => {
       window.removeEventListener("scroll", fn);
+    };
   }, []);
 
   useEffect(() => {
@@ -55,8 +60,6 @@ const { wishlist } = useWishlist();
       ) {
         setCatOpen(false);
       }
-<<<<<<< HEAD
-=======
 
       if (
         searchRef.current &&
@@ -64,13 +67,13 @@ const { wishlist } = useWishlist();
       ) {
         setShowSuggestions(false);
       }
->>>>>>> 20ff1abd (final production ready)
     };
 
     document.addEventListener("mousedown", fn);
 
-    return () =>
+    return () => {
       document.removeEventListener("mousedown", fn);
+    };
   }, []);
 
   useEffect(() => {
@@ -88,8 +91,13 @@ const { wishlist } = useWishlist();
 
       if (!data) return;
 
-      if (data.logo) setLogo(data.logo);
-      if (data.site_name) setSiteName(data.site_name);
+      if (data.logo) {
+        setLogo(data.logo);
+      }
+
+      if (data.site_name) {
+        setSiteName(data.site_name);
+      }
     }
 
     loadSettings();
@@ -103,20 +111,34 @@ const { wishlist } = useWishlist();
         return;
       }
 
-      const res = await fetch(
-        `/api/search?q=${encodeURIComponent(query)}`
-      );
+      try {
+        const res = await fetch(
+          `/api/search?q=${encodeURIComponent(query)}`
+        );
 
-      const data = await res.json();
+        if (!res.ok) {
+          setSuggestions([]);
+          setShowSuggestions(false);
+          return;
+        }
 
-      setSuggestions(data);
-      setShowSuggestions(true);
-      setSelectedIndex(-1);
+        const data = await res.json();
+
+        setSuggestions(Array.isArray(data) ? data : []);
+        setShowSuggestions(true);
+        setSelectedIndex(-1);
+      } catch {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
     }, 300);
 
-    return () => clearTimeout(delay);
+    return () => {
+      clearTimeout(delay);
+    };
   }, [query]);
-    function handleSearch(e: React.FormEvent) {
+
+  function handleSearch(e: React.FormEvent) {
     e.preventDefault();
 
     const q = query.trim();
@@ -133,7 +155,10 @@ const { wishlist } = useWishlist();
   function handleKeyDown(
     e: KeyboardEvent<HTMLInputElement>
   ) {
-    if (!showSuggestions || suggestions.length === 0) {
+    if (
+      !showSuggestions ||
+      suggestions.length === 0
+    ) {
       return;
     }
 
@@ -153,7 +178,10 @@ const { wishlist } = useWishlist();
       );
     }
 
-    if (e.key === "Enter" && selectedIndex >= 0) {
+    if (
+      e.key === "Enter" &&
+      selectedIndex >= 0
+    ) {
       e.preventDefault();
 
       router.push(
@@ -173,93 +201,44 @@ const { wishlist } = useWishlist();
     <header
       className={cn(
         "sticky top-0 z-50 bg-white transition-shadow duration-200",
-<<<<<<< HEAD
-        scrolled && "shadow-sm border-b border-gray-100"
-=======
         scrolled &&
           "shadow-sm border-b border-gray-100"
->>>>>>> 20ff1abd (final production ready)
       )}
     >
       <div className="container-site">
         <div className="flex h-16 items-center gap-3">
-<<<<<<< HEAD
           {/* Logo */}
           <Link
             href="/"
             className="flex items-center gap-3 shrink-0"
           >
             <Image
-              src="/wow-basket.png"
-              alt="WOW BASKET"
+              src={logo}
+              alt={siteName}
               width={180}
               height={50}
+              style={{
+                width: "auto",
+                height: "auto",
+              }}
               priority
             />
           </Link>
 
           {/* Desktop Search */}
-=======
-
-          <Link
-            href="/"
-            className="flex items-center gap-3 shrink-0"
-          >
-           <Image
-  src={logo}
-  alt={siteName}
-  width={180}
-  height={50}
-  style={{ width: "auto", height: "auto" }}
-  priority
-/>
-          </Link>
-
->>>>>>> 20ff1abd (final production ready)
           <form
             onSubmit={handleSearch}
             className="hidden sm:flex flex-1 max-w-xl"
           >
-<<<<<<< HEAD
-            <div className="relative w-full">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-=======
             <div
               ref={searchRef}
               className="relative w-full"
             >
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
->>>>>>> 20ff1abd (final production ready)
 
               <input
                 type="search"
                 value={query}
-<<<<<<< HEAD
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search mobiles, laptops, fashion…"
-                className="input pl-10 h-10"
-              />
-            </div>
-          </form>
-
-          {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-1 ml-2">
-            {[{ label: "Home", href: "/" }, { label: "Products", href: "/products" }].map(
-              (l) => (
-                <Link
-                  key={l.href}
-                  href={l.href}
-                  className={cn(
-                    "btn-ghost text-sm",
-                    pathname === l.href &&
-                      "bg-brand-50 text-brand-600"
-                  )}
-                >
-                  {l.label}
-                </Link>
-              )
-            )}
-=======
                 onChange={(e) =>
                   setQuery(e.target.value)
                 }
@@ -286,6 +265,10 @@ const { wishlist } = useWishlist();
                             selectedIndex === index &&
                               "bg-gray-100"
                           )}
+                          onClick={() => {
+                            setShowSuggestions(false);
+                            setQuery("");
+                          }}
                         >
                           <Image
                             src={item.image}
@@ -305,34 +288,49 @@ const { wishlist } = useWishlist();
                 )}
             </div>
           </form>
-                    <nav className="hidden lg:flex items-center gap-1 ml-2">
-            {[{ label: "Home", href: "/" }, { label: "Products", href: "/products" }].map((l) => (
+
+          {/* Desktop Nav */}
+          <nav className="hidden lg:flex items-center gap-1 ml-2">
+            {[
+              {
+                label: "Home",
+                href: "/",
+              },
+              {
+                label: "Products",
+                href: "/products",
+              },
+            ].map((l) => (
               <Link
                 key={l.href}
                 href={l.href}
                 className={cn(
                   "btn-ghost text-sm",
-                  pathname === l.href && "bg-brand-50 text-brand-600"
+                  pathname === l.href &&
+                    "bg-brand-50 text-brand-600"
                 )}
               >
                 {l.label}
               </Link>
             ))}
->>>>>>> 20ff1abd (final production ready)
 
-            <div ref={catRef} className="relative">
+            {/* Categories */}
+            <div
+              ref={catRef}
+              className="relative"
+            >
               <button
-                onClick={() => setCatOpen((o) => !o)}
+                type="button"
+                onClick={() =>
+                  setCatOpen((o) => !o)
+                }
                 className={cn(
                   "btn-ghost text-sm flex items-center gap-1",
                   catOpen && "bg-gray-100"
                 )}
               >
                 Categories
-<<<<<<< HEAD
 
-=======
->>>>>>> 20ff1abd (final production ready)
                 <ChevronDown
                   className={cn(
                     "h-3.5 w-3.5 transition-transform",
@@ -348,8 +346,9 @@ const { wishlist } = useWishlist();
                       <Link
                         key={cat.id}
                         href={`/categories/${cat.id}`}
-                        onClick={() => setCatOpen(false)}
-<<<<<<< HEAD
+                        onClick={() =>
+                          setCatOpen(false)
+                        }
                         className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-gray-50 transition-colors"
                       >
                         <span className="text-base">
@@ -359,12 +358,6 @@ const { wishlist } = useWishlist();
                         <span className="font-medium text-gray-800">
                           {cat.name}
                         </span>
-=======
-                        className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-gray-50"
-                      >
-                        <span>{cat.icon}</span>
-                        <span>{cat.name}</span>
->>>>>>> 20ff1abd (final production ready)
                       </Link>
                     ))}
                   </div>
@@ -373,23 +366,29 @@ const { wishlist } = useWishlist();
             </div>
           </nav>
 
+          {/* Right controls */}
           <div className="flex items-center gap-1 ml-auto lg:ml-0">
-<<<<<<< HEAD
+            <Link
+              href="/wishlist"
+              className="relative btn-ghost p-2"
+              aria-label="Wishlist"
+            >
+              <Heart className="h-5 w-5" />
+
+              {wishlist.length > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-4 h-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center px-1">
+                  {wishlist.length}
+                </span>
+              )}
+            </Link>
+
             <button
-              onClick={() => setMobile((o) => !o)}
+              type="button"
+              onClick={() =>
+                setMobile((o) => !o)
+              }
               className="lg:hidden btn-ghost p-2"
               aria-label="Menu"
-=======
-            <Link
-  href="/wishlist"
-  className="relative btn-ghost p-2"
->
-  <Heart className="h-5 w-5" />
-</Link>
-            <button
-              onClick={() => setMobile((o) => !o)}
-              className="lg:hidden btn-ghost p-2"
->>>>>>> 20ff1abd (final production ready)
             >
               {mobileOpen ? (
                 <X className="h-5 w-5" />
@@ -398,11 +397,9 @@ const { wishlist } = useWishlist();
               )}
             </button>
           </div>
-
         </div>
       </div>
 
-<<<<<<< HEAD
       {/* Category strip */}
       <div className="hidden lg:block border-t border-gray-100 bg-gray-50">
         <div className="container-site">
@@ -413,7 +410,8 @@ const { wishlist } = useWishlist();
                 href={`/categories/${cat.id}`}
                 className={cn(
                   "flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-gray-500 whitespace-nowrap border-b-2 border-transparent hover:border-brand-400 hover:text-brand-600 transition-colors",
-                  pathname === `/categories/${cat.id}` &&
+                  pathname ===
+                    `/categories/${cat.id}` &&
                     "border-brand-500 text-brand-600"
                 )}
               >
@@ -438,29 +436,42 @@ const { wishlist } = useWishlist();
               <input
                 type="search"
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search products…"
+                onChange={(e) =>
+                  setQuery(e.target.value)
+                }
+                placeholder="Search products..."
                 className="input pl-10 h-11"
               />
             </div>
           </form>
 
           <nav className="space-y-1">
-            {[{ label: "Home", href: "/" }, { label: "Products", href: "/products" }].map(
-              (l) => (
-                <Link
-                  key={l.href}
-                  href={l.href}
-                  className={cn(
-                    "block rounded-xl px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50",
-                    pathname === l.href &&
-                      "bg-brand-50 text-brand-600"
-                  )}
-                >
-                  {l.label}
-                </Link>
-              )
-            )}
+            {[
+              {
+                label: "Home",
+                href: "/",
+              },
+              {
+                label: "Products",
+                href: "/products",
+              },
+              {
+                label: "Wishlist",
+                href: "/wishlist",
+              },
+            ].map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className={cn(
+                  "block rounded-xl px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50",
+                  pathname === l.href &&
+                    "bg-brand-50 text-brand-600"
+                )}
+              >
+                {l.label}
+              </Link>
+            ))}
           </nav>
 
           <div>
@@ -484,13 +495,6 @@ const { wishlist } = useWishlist();
               ))}
             </div>
           </div>
-=======
-      {mobileOpen && (
-        <div className="lg:hidden border-t border-gray-100 bg-white p-4">
-          <p className="text-sm text-gray-500">
-            Mobile Menu
-          </p>
->>>>>>> 20ff1abd (final production ready)
         </div>
       )}
     </header>
