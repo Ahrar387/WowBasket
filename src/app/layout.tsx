@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
     .maybeSingle();
 
   return {
-    metadataBase: new URL("https://yourdomain.com"),
+    metadataBase: new URL("https://wowbasket.in"),
 
     title: {
       default: data?.site_title || "WOW BASKET",
@@ -58,7 +58,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description:
         data?.meta_description ||
         "Discover the best online shopping deals.",
-      url: "https://yourdomain.com",
+      url: "https://wowbasket.in",
 
       images: data?.og_image
         ? [
