@@ -11,7 +11,9 @@ const maxPrice = (filters as any).maxPrice;
 const brand = (filters as any).brand;
   let q = supabase.from("products").select(CARD_COLS, { count: "exact" }).eq("in_stock", true);
 
-  if (category) q = q.eq("category", category);
+ if (category) {
+  q = q.ilike("category", category.trim());
+}
   if (search)   q = q.or(`name.ilike.%${search}%,brand.ilike.%${search}%,description.ilike.%${search}%`);
 if (brand) q = q.eq("brand", brand);
 
