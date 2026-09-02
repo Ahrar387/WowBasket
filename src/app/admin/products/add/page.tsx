@@ -213,11 +213,11 @@ export default function AddProductPage() {
 
               {categories.map((category) => (
                 <option
-                  key={category.id}
-                  value={category.name}
-                >
-                  {category.name}
-                </option>
+  key={category.id}
+  value={category.id}
+>
+  {category.name}
+</option>
               ))}
             </select>
           </div>
