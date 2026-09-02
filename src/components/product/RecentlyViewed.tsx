@@ -118,7 +118,7 @@ export default function RecentlyViewed({
               </p>
 
               <p className="mt-2 font-bold text-brand-600">
-                ₹{product.price.toLocaleString("en-IN")}
+                ₹{Number(product.price ?? 0).toLocaleString("en-IN")}
               </p>
             </div>
           </Link>

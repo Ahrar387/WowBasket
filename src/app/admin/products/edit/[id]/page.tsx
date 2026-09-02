@@ -1,13 +1,9 @@
 "use client";
-
+import { CATEGORIES } from "@/lib/categories";
 import { useEffect, useState, ChangeEvent } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
-type Category = {
-  id: string;
-  name: string;
-};
 
 export default function EditProductPage() {
   const params = useParams();
@@ -17,7 +13,7 @@ export default function EditProductPage() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  const [categories, setCategories] = useState<Category[]>([]);
+
 
   const [product, setProduct] = useState({
     name: "",
@@ -33,18 +29,10 @@ export default function EditProductPage() {
   });
 
   useEffect(() => {
-    fetchCategories();
-    fetchProduct();
-  }, []);
+  fetchProduct();
+}, []);
 
-  async function fetchCategories() {
-    const { data } = await supabase
-      .from("categories")
-      .select("id,name")
-      .order("name");
-
-    setCategories(data || []);
-  }
+  
 
   async function fetchProduct() {
     const { data, error } = await supabase
@@ -200,14 +188,14 @@ export default function EditProductPage() {
                 Select Category
               </option>
 
-              {categories.map((category) => (
-                <option
-                  key={category.id}
-                  value={category.name}
-                >
-                  {category.name}
-                </option>
-              ))}
+              {CATEGORIES.map((category) => (
+  <option
+    key={category.id}
+    value={category.id}
+  >
+    {category.name}
+  </option>
+))}
             </select>
           </div>
 

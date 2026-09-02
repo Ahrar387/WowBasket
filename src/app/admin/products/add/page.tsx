@@ -1,13 +1,9 @@
 "use client";
-
+import { CATEGORIES } from "@/lib/categories";
 import { useEffect, useState, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
-type Category = {
-  id: string;
-  name: string;
-};
 
 export default function AddProductPage() {
   const router = useRouter();
@@ -15,7 +11,7 @@ export default function AddProductPage() {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  const [categories, setCategories] = useState<Category[]>([]);
+  
 
   const [form, setForm] = useState({
     name: "",
@@ -32,23 +28,7 @@ export default function AddProductPage() {
     trending: false,
   });
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
 
-  async function fetchCategories() {
-    const { data, error } = await supabase
-      .from("categories")
-      .select("id,name")
-      .order("name");
-
-    if (error) {
-      alert(error.message);
-      return;
-    }
-
-    setCategories(data || []);
-  }
 
   function handleChange(
     e: React.ChangeEvent<
@@ -211,14 +191,11 @@ export default function AddProductPage() {
                 Select Category
               </option>
 
-              {categories.map((category) => (
-                <option
-  key={category.id}
-  value={category.id}
->
-  {category.name}
-</option>
-              ))}
+              {CATEGORIES.map((category) => (
+  <option key={category.id} value={category.id}>
+    {category.name}
+  </option>
+))}
             </select>
           </div>
 
