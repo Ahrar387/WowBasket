@@ -9,6 +9,7 @@ import ProductCard from "@/components/product/ProductCard";
 import FilterBar from "@/components/ui/FilterBar";
 import Pagination from "@/components/ui/Pagination";
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 interface Props {
   params: Promise<{ category: string }>;
   searchParams: Promise<{ sortBy?: string; page?: string }>;
